@@ -1,0 +1,29 @@
+name: Formula checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Set up Homebrew and tap checkout
+        uses: Homebrew/actions/setup-homebrew@dc7099b3e807f1e2ecc61f3ecabc840eedd5586a
+        with:
+          stable: true
+      - name: Install and test
+        run: |
+          brew install devwooops/tap/pktide
+          brew test devwooops/tap/pktide
+          brew audit --strict devwooops/tap/pktide
+          brew style devwooops/tap/pktide
